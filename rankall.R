@@ -1,5 +1,5 @@
-rankhospital <- function(state, outcome, num="best"){
-
+rankall <- function(outcome, num="best"){
+    
     ## Read outcome data
     data <- read.csv("outcome-of-care-measures.csv", colClasses="character")
     
@@ -22,6 +22,11 @@ rankhospital <- function(state, outcome, num="best"){
     hospitals <- hospitals[with(hospitals, 
                                 order(hospitals[,col],hospitals[2])),]
     hospitals <- hospitals[!is.na(hospitals[,col]),]
+   
+    
+}
+
+findhospital <- function(hospitals, num){
     if(num == "best"){
         return(head(hospitals[,2],1))
     }
@@ -30,6 +35,5 @@ rankhospital <- function(state, outcome, num="best"){
     }
     else{
         return(c(head(hospitals[,2],num))[num])
-    }    
-        
+    } 
 }
