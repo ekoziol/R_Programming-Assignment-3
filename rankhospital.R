@@ -1,15 +1,15 @@
 rankhospital <- function(state, outcome, num="best"){
 
     ## Read outcome data
-    data <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+    data <- read.csv("outcome-of-care-measures.csv", colClasses="character",
+                     na.strings=c("Not Available", "NA"))
     
     ## Check that state and outcome are valid
-    states <- unique(data[,7])
     if(!(toupper(state) %in% states)){
         stop("invalid state")
     }
     outcomes = list("heart attack"=11, "heart failure"=17 ,"pneumonia"=23)
-    if(length(outcomes[outcome]) == 0){
+    if(length(outcomes[[outcome]]) == 0){
         stop("invalid outcome")
     }
     ##Return hospital name in that state with lowest 30 day death rate
@@ -26,6 +26,10 @@ rankhospital <- function(state, outcome, num="best"){
         return(head(hospitals[,2],1))
     }
     else if(num == "worst"){
+#         hospitals <- hospitals[with(hospitals, 
+#                                     order(hospitals[,col],hospitals[2]), 
+#                                     decreasing=c(T,F)),]
+#         return(head(hospitals[,2],1))
         return(tail(hospitals[,2],1))
     }
     else{

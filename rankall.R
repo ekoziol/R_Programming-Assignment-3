@@ -1,7 +1,8 @@
 rankall <- function(outcome, num="best"){
     
     ## Read outcome data
-    data <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+    data <- read.csv("outcome-of-care-measures.csv", colClasses="character",
+                     na.strings=c("Not Available", "NA"))
     
     ## Check that state and outcome are valid
     states <- unique(data[,7])
@@ -13,18 +14,22 @@ rankall <- function(outcome, num="best"){
     col = as.numeric(outcomes[outcome])
     hospitals <- data[((data[col] != "Not Available") 
                                             | (data[col] != "NA")),]
+    
     hospitals[,col] <- as.numeric(hospitals[,col])
     hospitals <- hospitals[with(hospitals, 
                                 order(hospitals[,col],hospitals[2])),]
     hospitals <- data.frame(hospitals[!is.na(hospitals[,col]),])
     
     
-    
-    hospitalRanks <- data.frame(hospital="NA", state = states)
+    #split data
+    hospitalSplit <- split(hospitals, hospitals[,7])
+    states <- sort(states)
+    hospitalRanks <- data.frame(hospital="NA", state = states, row.names=states)
     hospitalRanks[,"state"] <- states
-#     message(head(hospitals[,2],1))
+    
+    
     hospitalRanks[,"hospital"] <- sapply(hospitalRanks[,"state"], FUN = findhospital,
-                                         hospitals = hospitals, num = num)
+                                          num = num, hospitalsDF = hospitalSplit)
     ##Return a data frame with the hospital names and the
     ##(abbreviated) state name
     return(hospitalRanks)
@@ -32,15 +37,15 @@ rankall <- function(outcome, num="best"){
     
 }
 
-findhospital <- function(state, hospitals, num){
-    hospitals <- hospitals[hospitals[7] == state]
+findhospital <- function(state, hospitalsDF, num){
+    
     if(num == "best"){
-        return(head(hospitals[2],1))
+        return(head(hospitalsDF[[state]][,2],1))
     }
     else if(num == "worst"){
-        return(tail(hospitals[2],1))
+        return(tail(hospitalsDF[[state]][,2],1))
     }
     else{
-        return(c(head(hospitals[2],num))[num])
+        return(c(head(hospitalsDF[[state]][,2],num))[num])
     } 
 }
