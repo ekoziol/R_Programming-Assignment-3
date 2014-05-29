@@ -14,7 +14,7 @@ rankhospital <- function(state, outcome, num="best"){
     }
     ##Return hospital name in that state with lowest 30 day death rate
     
-    #message(as.numeric(outcomes[outcome]))
+
     col = as.numeric(outcomes[outcome])
     hospitals <- data[(data[7] == state) & ((data[col] != "Not Available") 
                                             | (data[col] != "NA")),]
@@ -26,10 +26,7 @@ rankhospital <- function(state, outcome, num="best"){
         return(head(hospitals[,2],1))
     }
     else if(num == "worst"){
-#         hospitals <- hospitals[with(hospitals, 
-#                                     order(hospitals[,col],hospitals[2]), 
-#                                     decreasing=c(T,F)),]
-#         return(head(hospitals[,2],1))
+
         return(tail(hospitals[,2],1))
     }
     else{
